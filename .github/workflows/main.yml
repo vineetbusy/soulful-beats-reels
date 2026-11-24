@@ -1,0 +1,32 @@
+name: Soulful Beats Daily 24x7 Reel Publisher
+
+on:
+  schedule:
+    - cron: '0 17 * * 1'   # Mon 10:30 PM IST
+    - cron: '30 14 * * 2'  # Tue 8:00 PM IST
+    - cron: '30 14 * * 3'  # Wed 8:00 PM IST
+    - cron: '0 15 * * 4'   # Thu 8:30 PM IST
+    - cron: '30 17 * * 5'  # Fri 11:00 PM IST
+    - cron: '0 14 * * 6'   # Sat 7:30 PM IST
+    - cron: '30 14 * * 0'  # Sun 8:00 PM IST
+  workflow_dispatch:
+
+jobs:
+  publish_reel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-freefont-ttf
+      - run: pip install instagrapi yt-dlp imageio-ffmpeg SpeechRecognition numpy requests
+      - env:
+          INSTA_SESSION: ${{ secrets.INSTA_SESSION_JSON }}
+        run: echo "$INSTA_SESSION" > insta_session.json
+      - run: python auto_reels_pipeline.py upload
+      - run: |
+          git config --global user.name "SoulfulBeats-Bot"
+          git config --global user.email "bot@soulfulbeats.com"
+          git add content_queue.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update queue" && git push)
