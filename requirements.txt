@@ -1,0 +1,6 @@
+instagrapi>=2.1.2
+yt-dlp>=2024.08.06
+imageio-ffmpeg>=0.5.1
+SpeechRecognition>=3.10.0
+numpy>=1.26.0
+requests>=2.31.0
